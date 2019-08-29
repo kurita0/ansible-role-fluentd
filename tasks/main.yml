@@ -1,0 +1,20 @@
+---
+- name: Install fluentd
+  pkgng: name={{ item }} state=present
+  with_items:
+    - rubygem-fluentd
+
+- name: Enable fluentd
+  service: name=fluentd enabled=yes
+
+- name: Start fluentd
+  service: name=fluentd state=started
+
+- name: fluentd_config
+  lineinfile:
+    dest: /etc/rc.conf
+    state: present
+    regexp: '^fluentd_config='
+    line: "fluentd_config={{ fluentd_config }}"
+  notify: restart fluentd
+  when: fluentd_config is defined 
